@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>ExcelBan</AssemblyName>
+    <RootNamespace>ExcelBan</RootNamespace>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <ApplicationHighDpiMode>SystemAware</ApplicationHighDpiMode>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- برای خواندن اکسل - سبک‌تر و متن‌بازتر (MIT) از EPPlus -->
+    <PackageReference Include="ClosedXML" Version="0.104.1" />
+    <!-- برای در دسترس بودن codepage های قدیمی مثل 1256 در دات‌نت مدرن -->
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- فونت فارسی استاندارد وزیرمتن (Vazirmatn) - مجوز OFL - برای نمایش یکسان روی همه سیستم‌ها -->
+    <EmbeddedResource Include="Fonts\Vazirmatn-Regular.ttf" />
+    <EmbeddedResource Include="Fonts\Vazirmatn-Bold.ttf" />
+    <!-- تصویر پس‌زمینه فرم اصلی -->
+    <EmbeddedResource Include="asset\mellat_bg.jpg" />
+  </ItemGroup>
+
+</Project>

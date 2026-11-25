@@ -1,0 +1,76 @@
+name: Build Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        platform: [x86, x64]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Publish ${{ matrix.platform }}
+        run: >
+          dotnet publish ExcelBan.csproj
+          -c Release -r win-${{ matrix.platform }}
+          --self-contained true
+          -p:PublishSingleFile=true
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ExcelBan-${{ matrix.platform }}
+          path: bin/Release/net8.0-windows/win-${{ matrix.platform }}/publish/ExcelBan.exe
+          retention-days: 1
+
+  release:
+    needs: build
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download x86 artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ExcelBan-x86
+          path: ./x86
+
+      - name: Download x64 artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ExcelBan-x64
+          path: ./x64
+
+      - name: Rename assets per platform
+        shell: pwsh
+        run: |
+          Copy-Item ./x86/ExcelBan.exe ./ExcelBan-x86.exe
+          Copy-Item ./x64/ExcelBan.exe ./ExcelBan-x64.exe
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          files: |
+            ./ExcelBan-x86.exe
+            ./ExcelBan-x64.exe
+          draft: false
+          prerelease: false
+          generate_release_notes: true
